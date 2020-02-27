@@ -11,13 +11,23 @@ import org.springframework.integration.dsl.IntegrationFlows;
 @EnableIntegration
 public class BasicIntegrationConfig{
 
-    @Bean
+   /* @Bean
     public IntegrationFlow fileMover() { // punto de entrada
 
         return IntegrationFlows.from("inputChannel")
                 .handle(new ReverseService(),"reverse")
                 .get();
     }
+*/
 
+
+    @Bean
+    public IntegrationFlow myFlow() {
+        return IntegrationFlows.from("inputChannel")
+                //.filter("World"::equals)
+                .transform("Hello "::concat)
+                .handle(System.out::println)
+                .get();
+    }
 
 }
