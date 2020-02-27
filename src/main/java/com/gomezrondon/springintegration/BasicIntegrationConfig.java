@@ -21,13 +21,20 @@ public class BasicIntegrationConfig{
 */
 
 
-    @Bean
+/*    @Bean
     public IntegrationFlow myFlow() {
         return IntegrationFlows.from("inputChannel")
                 //.filter("World"::equals)
                 .transform("Hello "::concat)
                 .handle(System.out::println)
                 .get();
+    }*/
+
+    @Bean
+    public IntegrationFlow myLambdaFlow() {
+        return f -> f.channel("inputChannel")
+                .transform("Hello "::concat)
+                .handle(System.out::println);
     }
 
 }
