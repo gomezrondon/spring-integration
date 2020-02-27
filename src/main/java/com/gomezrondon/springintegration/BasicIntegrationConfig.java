@@ -11,14 +11,13 @@ import org.springframework.integration.dsl.IntegrationFlows;
 @EnableIntegration
 public class BasicIntegrationConfig{
 
-   /* @Bean
+    @Bean
     public IntegrationFlow fileMover() { // punto de entrada
-
         return IntegrationFlows.from("inputChannel")
+                //.handle(new PrintService(),"print") // solo uno a la vez
                 .handle(new ReverseService(),"reverse")
                 .get();
     }
-*/
 
 
 /*    @Bean
@@ -30,11 +29,11 @@ public class BasicIntegrationConfig{
                 .get();
     }*/
 
-    @Bean
+/*    @Bean
     public IntegrationFlow myLambdaFlow() {
         return f -> f.channel("inputChannel")
                 .transform("Hello "::concat)
                 .handle(System.out::println);
-    }
+    }*/
 
 }

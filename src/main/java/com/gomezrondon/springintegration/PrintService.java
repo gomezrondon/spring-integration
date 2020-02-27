@@ -1,12 +1,20 @@
 package com.gomezrondon.springintegration;
 
+import org.springframework.messaging.Message;
+import org.springframework.messaging.MessageHeaders;
 
-import org.springframework.stereotype.Component;
+import java.util.Map;
 
-@Component
 public class PrintService {
 
-    public void print(String message) {
-        System.out.println(message);
+    public void print(Message<String> message) {
+        MessageHeaders headers = message.getHeaders();
+
+        for (Map.Entry<String, Object> entry : headers.entrySet()) {
+            System.out.println(entry.getKey());
+            System.out.println(entry.getValue());
+        }
+
+        System.out.println(message.getPayload());
     }
 }
