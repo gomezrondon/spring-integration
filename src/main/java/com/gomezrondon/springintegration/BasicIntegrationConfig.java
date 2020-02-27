@@ -20,7 +20,13 @@ public class BasicIntegrationConfig{
         return new DirectChannel();
     }
 
-
+    @Bean
+    public IntegrationFlow fileMover() { // punto de entrada
+        return IntegrationFlows.from("messageChannel")
+                //.handle(new PrintService(),"print") // solo uno a la vez
+                .handle(new PrintService(),"print")
+                .get();
+    }
 
 
 /*

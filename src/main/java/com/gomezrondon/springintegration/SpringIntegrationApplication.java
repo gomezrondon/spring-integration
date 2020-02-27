@@ -36,13 +36,13 @@ public class SpringIntegrationApplication implements ApplicationRunner {
 	@Override
 	public void run(ApplicationArguments args) throws Exception {
 
-		channel.subscribe(message -> new PrintService().print((Message<String>) message));
+		//channel.subscribe(message -> new PrintService().print((Message<String>) message));
 
 		Message<String> message = MessageBuilder.withPayload("hola mundo")
 				.setHeader("new header", "value heder")
 				.build();
 
-		System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>> "+channel.getFullChannelName());
+	//	System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>> "+channel.getFullChannelName());
 
 		channel.send(message);
 	}
