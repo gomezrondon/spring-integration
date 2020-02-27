@@ -23,31 +23,10 @@ public class BasicIntegrationConfig{
     @Bean
     public IntegrationFlow fileMover() { // punto de entrada
         return IntegrationFlows.from("messageChannel")
-                //.handle(new PrintService(),"print") // solo uno a la vez
                 .handle(new PrintService(),"print")
                 .get();
     }
 
-
-/*
-    @Bean
-    public IntegrationFlow fileMover() { // punto de entrada
-        return IntegrationFlows.from("inputChannel")
-                //.handle(new PrintService(),"print") // solo uno a la vez
-                .handle(new ReverseService(),"reverse")
-                .get();
-    }
-*/
-
-
-/*    @Bean
-    public IntegrationFlow myFlow() {
-        return IntegrationFlows.from("inputChannel")
-                //.filter("World"::equals)
-                .transform("Hello "::concat)
-                .handle(System.out::println)
-                .get();
-    }*/
 
 /*    @Bean
     public IntegrationFlow myLambdaFlow() {
