@@ -1,22 +1,15 @@
 package com.gomezrondon.springintegration;
 
 import org.springframework.messaging.Message;
-import org.springframework.messaging.MessageHeaders;
 import org.springframework.messaging.support.MessageBuilder;
-
-import java.util.Map;
 
 public class PrintService {
 
-    public Message<?> print(Message<String> message) {
-        MessageHeaders headers = message.getHeaders();
+    public Message<String> print(Message<String> message) {
+       // System.out.println(">>>>>>>>>>>>>> "+message);
 
-        for (Map.Entry<String, Object> entry : headers.entrySet()) {
-            System.out.println(entry.getKey());
-            System.out.println(entry.getValue());
-        }
-
-        System.out.println(message.getPayload());
-        return MessageBuilder.withPayload("new Message").build();
+        int messageNumber = (int) message.getHeaders().get("messageNumber");
+        return MessageBuilder.withPayload("Sending reply "+messageNumber).build();
+     //  return MessageBuilder.withPayload("Sending ?? ").build();
     }
 }

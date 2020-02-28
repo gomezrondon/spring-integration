@@ -2,44 +2,40 @@ package com.gomezrondon.springintegration;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.integration.channel.DirectChannel;
 import org.springframework.integration.config.EnableIntegration;
 import org.springframework.integration.dsl.IntegrationFlow;
 import org.springframework.integration.dsl.IntegrationFlows;
+import org.springframework.integration.dsl.MessageChannels;
+import org.springframework.integration.dsl.Pollers;
+import org.springframework.messaging.MessageChannel;
+
 
 
 @Configuration
 @EnableIntegration
 public class BasicIntegrationConfig{
 
-
     public static final String INPUT_CHANNEL = "inputChannel";
-    public static final String OUTPUT_CHANNEL = "outputChannel";
 
     @Bean(name = INPUT_CHANNEL)
-    public DirectChannel requestChannel() {
-        return new DirectChannel();
-    }
-
-    @Bean(name = OUTPUT_CHANNEL)
-    public DirectChannel responseChannel() {
-        return new DirectChannel();
+    public MessageChannel requestChannel() {
+        return MessageChannels.queue(10).get();
     }
 
     @Bean
     public IntegrationFlow fileMover() { // punto de entrada
         return IntegrationFlows.from(INPUT_CHANNEL)
+                .bridge(e -> e.poller(Pollers.fixedRate(1000).maxMessagesPerPoll(2)))
                 .handle(new PrintService(),"print") //Service Activator
-             //   .channel(OUTPUT_CHANNEL)
                 .get();
     }
 
 
 /*    @Bean
     public IntegrationFlow myLambdaFlow() {
-        return f -> f.channel("inputChannel")
-                .transform("Hello "::concat)
-                .handle(System.out::println);
+        return f -> f.channel(INPUT_CHANNEL)
+                .bridge(e -> e.poller(Pollers.fixedRate(1000).maxMessagesPerPoll(3)))
+                .handle(new PrintService(),"print");
     }*/
 
 }
