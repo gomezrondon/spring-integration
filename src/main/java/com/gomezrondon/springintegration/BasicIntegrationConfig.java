@@ -30,7 +30,7 @@ public class BasicIntegrationConfig{
     public IntegrationFlow fileMover() { // punto de entrada
         return IntegrationFlows.from(INPUT_CHANNEL)
                 .handle(new PrintService(),"print") //Service Activator
-                .channel(OUTPUT_CHANNEL)
+             //   .channel(OUTPUT_CHANNEL)
                 .get();
     }
 
