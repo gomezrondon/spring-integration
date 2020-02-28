@@ -2,12 +2,13 @@ package com.gomezrondon.springintegration;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.integration.channel.PriorityChannel;
 import org.springframework.integration.config.EnableIntegration;
 import org.springframework.integration.dsl.IntegrationFlow;
 import org.springframework.integration.dsl.IntegrationFlows;
 import org.springframework.integration.dsl.MessageChannels;
 import org.springframework.integration.dsl.Pollers;
-import org.springframework.messaging.MessageChannel;
+
 
 
 
@@ -18,8 +19,8 @@ public class BasicIntegrationConfig{
     public static final String INPUT_CHANNEL = "inputChannel";
 
     @Bean(name = INPUT_CHANNEL)
-    public MessageChannel requestChannel() {
-        return MessageChannels.queue(10).get();
+    public PriorityChannel requestChannel() {
+        return MessageChannels.priority().capacity(10).get();
     }
 
     @Bean
