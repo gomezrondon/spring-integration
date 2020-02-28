@@ -17,7 +17,11 @@ import org.springframework.messaging.support.MessageBuilder;
 public class SpringIntegrationApplication implements ApplicationRunner {
 
 	@Autowired
-	private DirectChannel channel;
+	private DirectChannel inputChannel;
+
+	@Autowired
+	private DirectChannel outputChannel;
+
 
 	public static void main(String[] args) {
 		SpringApplication.run(SpringIntegrationApplication.class, args);
@@ -26,11 +30,15 @@ public class SpringIntegrationApplication implements ApplicationRunner {
 	@Override
 	public void run(ApplicationArguments args) throws Exception {
 
+		outputChannel.subscribe(message -> System.out.println(message.getPayload()));
+
 		Message<String> message = MessageBuilder.withPayload("hola mundo")
 				.setHeader("new header", "value heder")
 				.build();
 
 
-		channel.send(message);
+		inputChannel.send(message);
+
+
 	}
 }
