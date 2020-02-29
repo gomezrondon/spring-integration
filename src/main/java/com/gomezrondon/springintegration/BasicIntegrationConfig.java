@@ -20,9 +20,7 @@ public class BasicIntegrationConfig{
 
     @Bean(name = INPUT_CHANNEL)
     public DirectChannel requestChannel() {
-        LoadBalancingStrategy loadBalancingStrategy = new RoundRobinLoadBalancingStrategy();
-        DirectChannel directChannel = new DirectChannel(loadBalancingStrategy);
-        directChannel.setFailover(true);
+        DirectChannel directChannel = new DirectChannel();
         return directChannel;
     }
 
