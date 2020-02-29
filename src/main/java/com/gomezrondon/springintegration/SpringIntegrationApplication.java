@@ -29,7 +29,7 @@ public class SpringIntegrationApplication implements ApplicationRunner {
 	public void run(ApplicationArguments args) throws Exception {
 
 		for (int x = 0; x < 10; x++) {
-			Message<String> message = MessageBuilder.withPayload("Payload: "+x).build();
+			Message<String> message = MessageBuilder.withPayload("Payload: "+x).setHeader("number",x).build();
 			channel.send(message);
 		}
 

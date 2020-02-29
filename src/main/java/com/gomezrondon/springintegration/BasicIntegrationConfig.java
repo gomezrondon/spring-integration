@@ -6,11 +6,13 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.integration.channel.PublishSubscribeChannel;
 import org.springframework.integration.config.EnableIntegration;
+import org.springframework.integration.core.GenericSelector;
 import org.springframework.integration.dsl.IntegrationFlow;
 import org.springframework.integration.dsl.IntegrationFlows;
 import org.springframework.integration.dsl.MessageChannels;
 import org.springframework.integration.dsl.Pollers;
 import org.springframework.integration.handler.MethodInvokingMessageHandler;
+import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.MessageHandler;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
@@ -66,13 +68,22 @@ public class BasicIntegrationConfig{
     @Bean
     public IntegrationFlow flowHandler1() { // punto de entrada
         return IntegrationFlows.from(INPUT_CHANNEL)
+                .filter(Message.class , getNumber())
                 .handle(testingHandle(new UppercasePrintService(),"print",5)) //Service Activator
                 .get();
+    }
+
+    private GenericSelector<Message> getNumber() {
+        return m -> {
+            Integer val = (Integer)m.getHeaders().get("number");
+            return val > 5;
+        };
     }
 
     @Bean
     public IntegrationFlow flowHandler2() { // punto de entrada
         return IntegrationFlows.from(INPUT_CHANNEL)
+                .filter(payload -> ((String)payload).startsWith("Payload"))
                 .handle(testingHandle(new PrintService(),"print",1)) //Service Activator
                 .get();
     }
@@ -84,5 +95,13 @@ public class BasicIntegrationConfig{
         return handler;
     }
 
+
+    @Bean
+    public GenericSelector<String> onlyJpgs() {
+        return message -> {
+            System.out.println(message);
+            return true;
+        };
+    }
 
 }
