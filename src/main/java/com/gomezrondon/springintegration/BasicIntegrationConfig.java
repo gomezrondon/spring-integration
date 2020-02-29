@@ -1,15 +1,14 @@
 package com.gomezrondon.springintegration;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.task.TaskExecutor;
 import org.springframework.integration.channel.DirectChannel;
 import org.springframework.integration.config.EnableIntegration;
+import org.springframework.integration.dispatcher.LoadBalancingStrategy;
+import org.springframework.integration.dispatcher.RoundRobinLoadBalancingStrategy;
 import org.springframework.integration.dsl.IntegrationFlow;
 import org.springframework.integration.dsl.IntegrationFlows;
-import org.springframework.integration.dsl.MessageChannels;
-import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
+
 
 
 @Configuration
@@ -17,25 +16,26 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 public class BasicIntegrationConfig{
 
 
-    @Bean
-    public TaskExecutor threadPoolTaskExecutor() {
-        ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
-        executor.setCorePoolSize(4);
-        executor.setMaxPoolSize(4);
-        executor.setThreadNamePrefix("default_task_executor_thread");
-        executor.initialize();
-        return executor;
-    }
+    public static final String INPUT_CHANNEL = "inputChannel";
 
-    @Bean(name = "messageChannel")
+    @Bean(name = INPUT_CHANNEL)
     public DirectChannel requestChannel() {
-        return new DirectChannel();
+        LoadBalancingStrategy loadBalancingStrategy = new RoundRobinLoadBalancingStrategy();
+        DirectChannel directChannel = new DirectChannel(loadBalancingStrategy);
+        directChannel.setFailover(true);
+        return directChannel;
     }
 
     @Bean
-    public IntegrationFlow fileMover() { // punto de entrada
-        return IntegrationFlows.from("messageChannel")
-                .channel(MessageChannels.executor(this.threadPoolTaskExecutor()))
+    public IntegrationFlow flowHandler1() { // punto de entrada
+        return IntegrationFlows.from(INPUT_CHANNEL)
+                .handle(new UppercasePrintService(),"print") //Service Activator
+                .get();
+    }
+
+    @Bean
+    public IntegrationFlow flowHandler2() { // punto de entrada
+        return IntegrationFlows.from(INPUT_CHANNEL)
                 .handle(new PrintService(),"print") //Service Activator
                 .get();
     }

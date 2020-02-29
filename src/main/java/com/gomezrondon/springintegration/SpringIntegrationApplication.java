@@ -26,7 +26,6 @@ public class SpringIntegrationApplication implements ApplicationRunner {
 	@Override
 	public void run(ApplicationArguments args) throws Exception {
 
-
 		for (int x = 0; x < 10; x++) {
 			Message<String> message = MessageBuilder.withPayload("Payload: "+x).build();
 			channel.send(message);
