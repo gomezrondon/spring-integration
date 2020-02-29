@@ -9,9 +9,13 @@ import org.springframework.integration.config.EnableIntegration;
 import org.springframework.integration.dsl.IntegrationFlow;
 import org.springframework.integration.dsl.IntegrationFlows;
 import org.springframework.integration.dsl.MessageChannels;
+import org.springframework.integration.dsl.Pollers;
 import org.springframework.integration.handler.MethodInvokingMessageHandler;
+import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.MessageHandler;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
+
+import java.util.concurrent.TimeUnit;
 
 
 @Configuration
@@ -20,6 +24,7 @@ public class BasicIntegrationConfig{
 
 
     public static final String INPUT_CHANNEL = "inputChannel";
+    public static final String QUEUE_INPUT_CHANNEL = "pollableChannel";
 
     @Bean
     public TaskExecutor threadPoolTaskExecutor() {
@@ -31,10 +36,23 @@ public class BasicIntegrationConfig{
         return executor;
     }
 
+    @Bean(name = QUEUE_INPUT_CHANNEL)
+    @Qualifier("queuechannel")  // this is necessary
+    public MessageChannel requestChannel() {
+        return MessageChannels.queue(10).get();
+    }
+
     @Bean(name = INPUT_CHANNEL)
-    @Qualifier("pubSub")  // this is necessary
     public PublishSubscribeChannel publishSubscribe() {
         return MessageChannels.publishSubscribe(threadPoolTaskExecutor()).get();
+    }
+
+    @Bean
+    public IntegrationFlow fileWriter() {
+        return IntegrationFlows.from(QUEUE_INPUT_CHANNEL)
+                .bridge(e -> e.poller(Pollers.fixedRate(1, TimeUnit.SECONDS, 1)))
+                .channel(INPUT_CHANNEL)
+                .get();
     }
 
     @Bean

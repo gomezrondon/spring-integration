@@ -18,7 +18,7 @@ import org.springframework.messaging.support.MessageBuilder;
 public class SpringIntegrationApplication implements ApplicationRunner {
 
 	@Autowired
-	@Qualifier(value = "pubSub") // this is necessary
+	@Qualifier(value = "queuechannel") // this is necessary
 	private MessageChannel channel;
 
 	public static void main(String[] args) {

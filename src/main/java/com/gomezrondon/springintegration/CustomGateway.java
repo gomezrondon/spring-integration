@@ -6,7 +6,7 @@ import org.springframework.integration.annotation.MessagingGateway;
 @MessagingGateway(name = "myGateway")
 public interface CustomGateway {
 
-    @Gateway(requestChannel="inputChannel")
+    @Gateway(requestChannel="pollableChannel")
     void print(String message);
 
 }
