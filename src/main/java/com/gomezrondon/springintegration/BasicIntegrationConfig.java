@@ -26,6 +26,14 @@ public class BasicIntegrationConfig{
     public static final String INPUT_CHANNEL = "inputChannel";
     public static final String QUEUE_INPUT_CHANNEL = "pollableChannel";
 
+
+/*    @Bean
+    public IntegrationFlow controlBusFlow() {
+        return IntegrationFlows.from(CustomGateway.class)
+                .controlBus()
+                .get();
+    }*/
+
     @Bean
     public TaskExecutor threadPoolTaskExecutor() {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
