@@ -1,18 +1,16 @@
 package com.gomezrondon.springintegration;
 
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Profile;
-import org.springframework.integration.channel.DirectChannel;
+import org.springframework.integration.channel.PublishSubscribeChannel;
 import org.springframework.integration.config.EnableIntegration;
-import org.springframework.integration.dispatcher.LoadBalancingStrategy;
-import org.springframework.integration.dispatcher.RoundRobinLoadBalancingStrategy;
 import org.springframework.integration.dsl.IntegrationFlow;
 import org.springframework.integration.dsl.IntegrationFlows;
+import org.springframework.integration.dsl.MessageChannels;
 import org.springframework.integration.handler.MethodInvokingMessageHandler;
-import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageHandler;
-import org.springframework.messaging.MessagingException;
+
 
 
 @Configuration
@@ -23,9 +21,9 @@ public class BasicIntegrationConfig{
     public static final String INPUT_CHANNEL = "inputChannel";
 
     @Bean(name = INPUT_CHANNEL)
-    public DirectChannel requestChannel() {
-        DirectChannel directChannel = new DirectChannel();
-        return directChannel;
+    @Qualifier("pubSub")  // this is necessary
+    public PublishSubscribeChannel publishSubscribe() {
+        return MessageChannels.publishSubscribe().get();
     }
 
     @Bean

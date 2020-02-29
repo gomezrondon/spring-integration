@@ -2,12 +2,13 @@ package com.gomezrondon.springintegration;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.integration.channel.DirectChannel;
 import org.springframework.messaging.Message;
+import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.support.MessageBuilder;
 
 
@@ -17,7 +18,8 @@ import org.springframework.messaging.support.MessageBuilder;
 public class SpringIntegrationApplication implements ApplicationRunner {
 
 	@Autowired
-	private DirectChannel channel;
+	@Qualifier(value = "pubSub") // this is necessary
+	private MessageChannel channel;
 
 	public static void main(String[] args) {
 		SpringApplication.run(SpringIntegrationApplication.class, args);
