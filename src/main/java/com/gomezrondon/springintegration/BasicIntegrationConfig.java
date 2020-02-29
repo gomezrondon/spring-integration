@@ -1,16 +1,31 @@
 package com.gomezrondon.springintegration;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.task.TaskExecutor;
 import org.springframework.integration.channel.DirectChannel;
 import org.springframework.integration.config.EnableIntegration;
 import org.springframework.integration.dsl.IntegrationFlow;
 import org.springframework.integration.dsl.IntegrationFlows;
+import org.springframework.integration.dsl.MessageChannels;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 
 @Configuration
 @EnableIntegration
 public class BasicIntegrationConfig{
+
+
+    @Bean
+    public TaskExecutor threadPoolTaskExecutor() {
+        ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
+        executor.setCorePoolSize(4);
+        executor.setMaxPoolSize(4);
+        executor.setThreadNamePrefix("default_task_executor_thread");
+        executor.initialize();
+        return executor;
+    }
 
     @Bean(name = "messageChannel")
     public DirectChannel requestChannel() {
@@ -20,11 +35,8 @@ public class BasicIntegrationConfig{
     @Bean
     public IntegrationFlow fileMover() { // punto de entrada
         return IntegrationFlows.from("messageChannel")
-                .publishSubscribeChannel(pubSub -> pubSub
-                        .subscribe(flow -> flow.handle(new PrintService(),"print"))
-
-                        .subscribe(flow -> flow.handle(new UppercasePrintService(),"print"))
-                )
+                .channel(MessageChannels.executor(this.threadPoolTaskExecutor()))
+                .handle(new PrintService(),"print") //Service Activator
                 .get();
     }
 
