@@ -21,12 +21,6 @@ public class BasicIntegrationConfig{
 
     public static final String INPUT_CHANNEL = "inputChannel";
 
-    @Bean(name = INPUT_CHANNEL)
-    @Qualifier("pubSub")  // this is necessary
-    public PublishSubscribeChannel publishSubscribe() {
-        return MessageChannels.publishSubscribe().get();
-    }
-
     @Bean
     public TaskExecutor threadPoolTaskExecutor() {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
@@ -37,10 +31,15 @@ public class BasicIntegrationConfig{
         return executor;
     }
 
+    @Bean(name = INPUT_CHANNEL)
+    @Qualifier("pubSub")  // this is necessary
+    public PublishSubscribeChannel publishSubscribe() {
+        return MessageChannels.publishSubscribe(threadPoolTaskExecutor()).get();
+    }
+
     @Bean
     public IntegrationFlow flowHandler1() { // punto de entrada
         return IntegrationFlows.from(INPUT_CHANNEL)
-                .channel(MessageChannels.executor(this.threadPoolTaskExecutor())) // si funciona
                 .handle(testingHandle(new UppercasePrintService(),"print",5)) //Service Activator
                 .get();
     }
@@ -48,7 +47,6 @@ public class BasicIntegrationConfig{
     @Bean
     public IntegrationFlow flowHandler2() { // punto de entrada
         return IntegrationFlows.from(INPUT_CHANNEL)
-                //.channel(MessageChannels.executor(this.threadPoolTaskExecutor())) // si funciona
                 .handle(testingHandle(new PrintService(),"print",1)) //Service Activator
                 .get();
     }
@@ -60,12 +58,5 @@ public class BasicIntegrationConfig{
         return handler;
     }
 
-
-/*    @Bean
-    public IntegrationFlow myLambdaFlow() {
-        return f -> f.channel("inputChannel")
-                .transform("Hello "::concat)
-                .handle(System.out::println);
-    }*/
 
 }
