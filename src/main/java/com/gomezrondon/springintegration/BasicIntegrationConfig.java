@@ -8,6 +8,7 @@ import org.springframework.integration.dsl.IntegrationFlow;
 import org.springframework.integration.dsl.IntegrationFlows;
 import org.springframework.integration.dsl.MessageChannels;
 import org.springframework.integration.handler.MethodInvokingMessageHandler;
+import org.springframework.integration.router.HeaderValueRouter;
 import org.springframework.integration.router.PayloadTypeRouter;
 import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.MessageHandler;
@@ -37,20 +38,18 @@ public class BasicIntegrationConfig{
     }
 
 
-/*    @Bean
-    public PayloadTypeRouter router() {
-        PayloadTypeRouter router = new PayloadTypeRouter();
-        router.setChannelMapping(Integer.class.getName(), "otroChanel1");
-        router.setChannelMapping(String.class.getName(), "otroChanel2");
+    @Bean
+    public HeaderValueRouter router() {
+        HeaderValueRouter router = new HeaderValueRouter("type");
+        router.setChannelMapping("teacher", "otroChanel1");
+        router.setChannelMapping("student", "otroChanel2");
         return router;
-    }*/
+    }
 
     @Bean
     public IntegrationFlow flowRouting() { // punto de entrada
         return IntegrationFlows.from(INPUT_CHANNEL)
-                .<Object, Class<?>>route(Object::getClass, m -> m
-                        .channelMapping(String.class, "otroChanel2")
-                        .channelMapping(Integer.class, "otroChanel1"))
+                .route(router())
                 .get();
     }
 

@@ -31,10 +31,10 @@ public class SpringIntegrationApplication implements ApplicationRunner {
 		for (int x = 0; x < 10; x++) {
 
 			if (x % 2 == 0) {
-				Message<?> message = MessageBuilder.withPayload(x).setHeader("number", x).build();
+				Message<?> message = MessageBuilder.withPayload(x).setHeader("type","teacher").build();
 				channel.send(message);
 			} else {
-				Message<?> message = MessageBuilder.withPayload(new String("soy string: "+x)).setHeader("number",x).build();
+				Message<?> message = MessageBuilder.withPayload(new String("soy string: "+x)).setHeader("type","student").build();
 				channel.send(message);
 			}
 
