@@ -3,6 +3,8 @@ package com.gomezrondon.springintegration;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.expression.Expression;
+import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.integration.config.EnableIntegration;
 import org.springframework.integration.core.MessageSelector;
 import org.springframework.integration.dsl.IntegrationFlow;
@@ -11,6 +13,7 @@ import org.springframework.integration.dsl.MessageChannels;
 import org.springframework.integration.dsl.Transformers;
 import org.springframework.integration.handler.MethodInvokingMessageHandler;
 import org.springframework.integration.router.RecipientListRouter;
+import org.springframework.integration.transformer.ContentEnricher;
 import org.springframework.integration.transformer.Transformer;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
@@ -40,15 +43,20 @@ public class BasicIntegrationConfig{
     }
 
 
-    @Bean
+     @Bean
     public IntegrationFlow flowHandler1() { // punto de entrada
-
-        Map<String, String> stringMap = new HashMap<>();
-
+// https://docs.spring.io/spring-integration/reference/html/message-transformation.html#payload-enricher
         return IntegrationFlows.from(INPUT_CHANNEL)
-                .transform(Transformers.toJson())
-                .headerFilter("privateKey")
-                .enrichHeaders(h -> h.header("tag", "flowHandler1"))
+                .enrich(e -> e.requestPayload(Message::getPayload)
+                                .shouldClonePayload(false)
+                                .<Map<String, String>>propertyFunction("lastName", m -> {
+                                    String firstName = ((Person) m.getPayload()).getLastName();
+                                    if (firstName.equalsIgnoreCase("gomez")) {
+                                        return "pepe";
+                                    }
+                                    return firstName;
+                                })
+                )
                 .channel(OUTPUT_CHANNEL)
                 .get();
     }
