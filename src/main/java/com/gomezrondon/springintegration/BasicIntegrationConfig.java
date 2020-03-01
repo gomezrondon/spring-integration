@@ -4,11 +4,13 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.integration.config.EnableIntegration;
+import org.springframework.integration.core.MessageSelector;
 import org.springframework.integration.dsl.IntegrationFlow;
 import org.springframework.integration.dsl.IntegrationFlows;
 import org.springframework.integration.dsl.MessageChannels;
 import org.springframework.integration.handler.MethodInvokingMessageHandler;
 import org.springframework.integration.router.RecipientListRouter;
+import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.MessageHandler;
 
@@ -43,7 +45,7 @@ public class BasicIntegrationConfig{
 /*        router.setSendTimeout(1_234L);
         router.setIgnoreSendFailures(true);
         router.setApplySequence(true);*/
-        router.addRecipient("otroChanel1");
+        router.addRecipient("otroChanel1", message -> message.getPayload().equals(5));
         router.addRecipient("otroChanel2");
 
         return router;
