@@ -9,7 +9,7 @@ public class PrintService {
     public void print(Message<?> message) {
         System.out.println(message.getPayload());
 
-   //    message.getHeaders().forEach((k,v)->System.out.println(k + ":" + v));
+       message.getHeaders().forEach((k,v)->System.out.println(k + ":" + v));
 
     }
 }

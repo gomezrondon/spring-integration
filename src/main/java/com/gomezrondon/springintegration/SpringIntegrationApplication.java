@@ -30,8 +30,10 @@ public class SpringIntegrationApplication implements ApplicationRunner {
 		List<Person> list = Arrays.asList(new Person("javier", "gomez"), new Person("pedro", "perez"), new Person("andres", "torrez"));
 
 		list.forEach(person -> {
-			String uppercase = printerGateway.uppercase(person);
-			System.out.println("<<< "+uppercase);
+/*			String uppercase = printerGateway.uppercase(person);
+			System.out.println("<<< "+uppercase);*/
+
+			printerGateway.print(person);
 		});
 
 	}
