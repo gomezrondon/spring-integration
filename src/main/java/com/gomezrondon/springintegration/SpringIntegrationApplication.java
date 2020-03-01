@@ -17,7 +17,7 @@ import java.util.List;
 public class SpringIntegrationApplication implements ApplicationRunner {
 
 	@Autowired
-	private PrinterGateway printerGateway;
+	private EnhancedPrinterGateway printerGateway;
 
 
 	public static void main(String[] args) {
@@ -28,13 +28,10 @@ public class SpringIntegrationApplication implements ApplicationRunner {
 	public void run(ApplicationArguments args) throws Exception {
 
 		List<Person> list = Arrays.asList(new Person("javier", "gomez"), new Person("pedro", "perez"), new Person("andres", "torrez"));
-		// sending a message to a Gateway -> SA uppercase -> SA print message (return void)
-		// the message has the replyChannel
+
 		list.forEach(person -> {
-			Message<Person> message = MessageBuilder.withPayload(person)
-					.setHeader("replyChannel", BasicIntegrationConfig.OUTPUT_CHANNEL)
-					.build();
-			printerGateway.print(message);
+			String uppercase = printerGateway.uppercase(person);
+			System.out.println("<<< "+uppercase);
 		});
 
 	}

@@ -14,31 +14,30 @@ import org.springframework.integration.dsl.IntegrationFlows;
 public class BasicIntegrationConfig{
 
 
-    public static final String INPUT_CHANNEL = "inputChannel";
-    public static final String OUTPUT_CHANNEL = "outputChannel";
+    public static final String INPUT_CHANNEL = "printChannel";
+    public static final String UPPERCASE_CHANNEL = "uppercaseChannel";
 
     @Bean(name = INPUT_CHANNEL)
     public DirectChannel requestChannel() {
         return new DirectChannel();
     }
+    @Bean
+    public IntegrationFlow fileMover() { // punto de entrada
+        return IntegrationFlows.from(INPUT_CHANNEL)
+                .handle(new PrintService()) //Service Activator
+                .get();
+    }
 
-    @Bean(name = OUTPUT_CHANNEL)
+    @Bean(name = UPPERCASE_CHANNEL)
     public DirectChannel responseChannel() {
         return new DirectChannel();
     }
 
     @Bean
     public IntegrationFlow fileMover2() { // punto de entrada
-        return IntegrationFlows.from(INPUT_CHANNEL)
+        return IntegrationFlows.from(UPPERCASE_CHANNEL)
                 .handle(new UppercaseService(), "execute") //Service Activator
               //   .channel(OUTPUT_CHANNEL) //is in the replyChannel
-                .get();
-    }
-
-    @Bean
-    public IntegrationFlow fileMover() { // punto de entrada
-        return IntegrationFlows.from(OUTPUT_CHANNEL)
-                .handle(new PrintService(),"print") //Service Activator
                 .get();
     }
 

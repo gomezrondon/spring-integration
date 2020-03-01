@@ -2,13 +2,13 @@ package com.gomezrondon.springintegration;
 
 import org.springframework.integration.annotation.Gateway;
 import org.springframework.integration.annotation.MessagingGateway;
-import org.springframework.messaging.Message;
-
-
 
 @MessagingGateway(name = "myGateway")
-public interface PrinterGateway {
+public interface EnhancedPrinterGateway {
 
-    @Gateway(requestChannel="inputChannel")
-    void print(Message<Person> message);
+    @Gateway(requestChannel = "printChannel")
+    void print(Person person);
+
+    @Gateway(requestChannel = "uppercaseChannel")
+    String uppercase(Person person);
 }
