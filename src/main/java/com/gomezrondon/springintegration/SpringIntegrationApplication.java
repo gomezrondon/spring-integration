@@ -29,17 +29,8 @@ public class SpringIntegrationApplication implements ApplicationRunner {
 	public void run(ApplicationArguments args) throws Exception {
 
 		for (int x = 0; x < 10; x++) {
-
-			if (x % 2 == 0) {
-				Message<?> message = MessageBuilder.withPayload(x).setHeader("type","teacher").build();
-				channel.send(message);
-			} else {
-				Message<?> message = MessageBuilder.withPayload(new String("soy string: "+x)).setHeader("type","student").build();
-				channel.send(message);
-			}
-
-
-
+			Message<?> message = MessageBuilder.withPayload(x).build();
+			channel.send(message);
 		}
 
 	}
