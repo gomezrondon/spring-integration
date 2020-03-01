@@ -39,7 +39,7 @@ public class BasicIntegrationConfig{
     public IntegrationFlow flowHandler1() { // punto de entrada
         return IntegrationFlows.from(INPUT_CHANNEL)
                 // < from , to >
-                .<Integer, Integer>transform(source -> source * 10)
+                .transform(new CustomTransformer())
                 .channel(OUTPUT_CHANNEL)
                 .get();
     }
