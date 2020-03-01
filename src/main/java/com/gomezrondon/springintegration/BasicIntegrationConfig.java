@@ -21,6 +21,7 @@ public class BasicIntegrationConfig{
 
 
     public static final String INPUT_CHANNEL = "inputChannel";
+    public static final String OUTPUT_CHANNEL = "outputChannel";
 
     @Bean(name = INPUT_CHANNEL)
     @Qualifier("directChannel")  // this is necessary
@@ -28,47 +29,24 @@ public class BasicIntegrationConfig{
         return MessageChannels.direct().get();
     }
 
-    @Bean(name = "otroChanel1")
+    @Bean(name = OUTPUT_CHANNEL)
     public MessageChannel otroChannel() {
         return MessageChannels.direct().get();
-    }
-
-    @Bean(name = "otroChanel2")
-    public MessageChannel otroChannel2() {
-        return MessageChannels.direct().get();
-    }
-
-
-    @Bean
-    public RecipientListRouter router() {
-        RecipientListRouter router = new RecipientListRouter();
-/*        router.setSendTimeout(1_234L);
-        router.setIgnoreSendFailures(true);
-        router.setApplySequence(true);*/
-        router.addRecipient("otroChanel1", message -> message.getPayload().equals(5));
-        router.addRecipient("otroChanel2");
-
-        return router;
-    }
-
-    @Bean
-    public IntegrationFlow flowRouting() { // punto de entrada
-        return IntegrationFlows.from(INPUT_CHANNEL)
-                .route(router())
-                .get();
     }
 
 
     @Bean
     public IntegrationFlow flowHandler1() { // punto de entrada
-        return IntegrationFlows.from("otroChanel1")
-                .handle(testingHandle(new NumericPrintService(),"print",5)) //Service Activator
+        return IntegrationFlows.from(INPUT_CHANNEL)
+                // < from , to >
+                .<Integer, Integer>transform(source -> source * 10)
+                .channel(OUTPUT_CHANNEL)
                 .get();
     }
 
     @Bean
     public IntegrationFlow flowHandler2() { // punto de entrada
-        return IntegrationFlows.from("otroChanel2")
+        return IntegrationFlows.from(OUTPUT_CHANNEL)
                 .handle(testingHandle(new PrintService(),"print",1)) //Service Activator
                 .get();
     }
