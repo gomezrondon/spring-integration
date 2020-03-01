@@ -10,5 +10,5 @@ import org.springframework.messaging.Message;
 public interface PrinterGateway {
 
     @Gateway(requestChannel="inputChannel")
-    Message<String> print(Message<String> message);
+    void print(Message<Person> message);
 }

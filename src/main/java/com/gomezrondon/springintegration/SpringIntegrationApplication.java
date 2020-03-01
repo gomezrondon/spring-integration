@@ -6,9 +6,11 @@ import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.integration.channel.DirectChannel;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.support.MessageBuilder;
+
+import java.util.Arrays;
+import java.util.List;
 
 
 @SpringBootApplication
@@ -16,9 +18,6 @@ public class SpringIntegrationApplication implements ApplicationRunner {
 
 	@Autowired
 	private PrinterGateway printerGateway;
-
-	@Autowired
-	private DirectChannel outputChannel;
 
 
 	public static void main(String[] args) {
@@ -28,15 +27,15 @@ public class SpringIntegrationApplication implements ApplicationRunner {
 	@Override
 	public void run(ApplicationArguments args) throws Exception {
 
-		outputChannel.subscribe(message -> System.out.println(">>>>>>>>>> " +message.getPayload()));
-
-		Message<String> message = MessageBuilder.withPayload("hola mundo")
-				.setHeader("new header", "value heder")
-				.build();
-
-
-		printerGateway.print(message);
-
+		List<Person> list = Arrays.asList(new Person("javier", "gomez"), new Person("pedro", "perez"), new Person("andres", "torrez"));
+		// sending a message to a Gateway -> SA uppercase -> SA print message (return void)
+		// the message has the replyChannel
+		list.forEach(person -> {
+			Message<Person> message = MessageBuilder.withPayload(person)
+					.setHeader("replyChannel", BasicIntegrationConfig.OUTPUT_CHANNEL)
+					.build();
+			printerGateway.print(message);
+		});
 
 	}
 }

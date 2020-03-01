@@ -28,19 +28,20 @@ public class BasicIntegrationConfig{
     }
 
     @Bean
-    public IntegrationFlow fileMover() { // punto de entrada
+    public IntegrationFlow fileMover2() { // punto de entrada
         return IntegrationFlows.from(INPUT_CHANNEL)
+                .handle(new UppercaseService(), "execute") //Service Activator
+              //   .channel(OUTPUT_CHANNEL) //is in the replyChannel
+                .get();
+    }
+
+    @Bean
+    public IntegrationFlow fileMover() { // punto de entrada
+        return IntegrationFlows.from(OUTPUT_CHANNEL)
                 .handle(new PrintService(),"print") //Service Activator
-                .channel(OUTPUT_CHANNEL)
                 .get();
     }
 
 
-/*    @Bean
-    public IntegrationFlow myLambdaFlow() {
-        return f -> f.channel("inputChannel")
-                .transform("Hello "::concat)
-                .handle(System.out::println);
-    }*/
 
 }
