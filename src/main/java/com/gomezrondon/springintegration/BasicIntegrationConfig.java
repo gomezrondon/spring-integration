@@ -40,10 +40,8 @@ public class BasicIntegrationConfig{
     @Bean
     public IntegrationFlow flowHandler1() { // punto de entrada
         return IntegrationFlows.from(INPUT_CHANNEL)
-                // < from , to >
-          //      .transform(new CustomTransformer())
-          //      .transform(Transformers.objectToString())
                 .transform(Transformers.toJson())
+                .headerFilter("privateKey")
                 .channel(OUTPUT_CHANNEL)
                 .get();
     }

@@ -32,7 +32,7 @@ public class SpringIntegrationApplication implements ApplicationRunner {
 		List<Person> list = Arrays.asList(new Person("javier", "gomez"), new Person("pedro", "perez"));
 
 		list.forEach(person -> {
-			Message<?> message = MessageBuilder.withPayload(person).build();
+			Message<?> message = MessageBuilder.withPayload(person).setHeader("privateKey","123456").build();
 			channel.send(message);
 		});
 
