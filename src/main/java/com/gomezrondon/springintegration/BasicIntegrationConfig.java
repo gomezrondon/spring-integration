@@ -16,6 +16,9 @@ import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.MessageHandler;
 
+import java.util.HashMap;
+import java.util.Map;
+
 
 @Configuration
 @EnableIntegration
@@ -39,9 +42,13 @@ public class BasicIntegrationConfig{
 
     @Bean
     public IntegrationFlow flowHandler1() { // punto de entrada
+
+        Map<String, String> stringMap = new HashMap<>();
+
         return IntegrationFlows.from(INPUT_CHANNEL)
                 .transform(Transformers.toJson())
                 .headerFilter("privateKey")
+                .enrichHeaders(h -> h.header("tag", "flowHandler1"))
                 .channel(OUTPUT_CHANNEL)
                 .get();
     }
