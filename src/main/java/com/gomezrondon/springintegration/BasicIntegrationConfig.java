@@ -8,8 +8,10 @@ import org.springframework.integration.core.MessageSelector;
 import org.springframework.integration.dsl.IntegrationFlow;
 import org.springframework.integration.dsl.IntegrationFlows;
 import org.springframework.integration.dsl.MessageChannels;
+import org.springframework.integration.dsl.Transformers;
 import org.springframework.integration.handler.MethodInvokingMessageHandler;
 import org.springframework.integration.router.RecipientListRouter;
+import org.springframework.integration.transformer.Transformer;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.MessageHandler;
@@ -39,7 +41,9 @@ public class BasicIntegrationConfig{
     public IntegrationFlow flowHandler1() { // punto de entrada
         return IntegrationFlows.from(INPUT_CHANNEL)
                 // < from , to >
-                .transform(new CustomTransformer())
+          //      .transform(new CustomTransformer())
+          //      .transform(Transformers.objectToString())
+                .transform(Transformers.toJson())
                 .channel(OUTPUT_CHANNEL)
                 .get();
     }

@@ -11,7 +11,8 @@ import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.support.MessageBuilder;
 
-
+import java.util.Arrays;
+import java.util.List;
 
 
 @SpringBootApplication
@@ -28,10 +29,14 @@ public class SpringIntegrationApplication implements ApplicationRunner {
 	@Override
 	public void run(ApplicationArguments args) throws Exception {
 
-		for (int x = 0; x < 10; x++) {
-			Message<?> message = MessageBuilder.withPayload(x).build();
+		List<Person> list = Arrays.asList(new Person("javier", "gomez"), new Person("pedro", "perez"));
+
+		list.forEach(person -> {
+			Message<?> message = MessageBuilder.withPayload(person).build();
 			channel.send(message);
-		}
+		});
+
+
 
 	}
 }
