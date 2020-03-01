@@ -18,7 +18,7 @@ import org.springframework.messaging.support.MessageBuilder;
 public class SpringIntegrationApplication implements ApplicationRunner {
 
 	@Autowired
-	@Qualifier(value = "queuechannel") // this is necessary
+	@Qualifier(value = BasicIntegrationConfig.INPUT_CHANNEL) // this is necessary
 	private MessageChannel channel;
 
 	public static void main(String[] args) {
@@ -29,8 +29,17 @@ public class SpringIntegrationApplication implements ApplicationRunner {
 	public void run(ApplicationArguments args) throws Exception {
 
 		for (int x = 0; x < 10; x++) {
-			Message<String> message = MessageBuilder.withPayload("Payload: "+x).setHeader("number",x).build();
-			channel.send(message);
+
+			if (x % 2 == 0) {
+				Message<?> message = MessageBuilder.withPayload(x).setHeader("number", x).build();
+				channel.send(message);
+			} else {
+				Message<?> message = MessageBuilder.withPayload(new String("soy string: "+x)).setHeader("number",x).build();
+				channel.send(message);
+			}
+
+
+
 		}
 
 	}

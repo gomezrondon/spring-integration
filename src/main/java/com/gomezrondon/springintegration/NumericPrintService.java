@@ -3,9 +3,9 @@ package com.gomezrondon.springintegration;
 import org.springframework.messaging.Message;
 
 
-public class UppercasePrintService {
+public class NumericPrintService {
 
     public void print(Message<String> message) {
-        System.out.println("> "+message.getPayload().toUpperCase());
+        System.out.println("Printing the numeric: "+message.getPayload().toUpperCase());
     }
 }
