@@ -37,18 +37,20 @@ public class BasicIntegrationConfig{
     }
 
 
-    @Bean
+/*    @Bean
     public PayloadTypeRouter router() {
         PayloadTypeRouter router = new PayloadTypeRouter();
         router.setChannelMapping(Integer.class.getName(), "otroChanel1");
         router.setChannelMapping(String.class.getName(), "otroChanel2");
         return router;
-    }
+    }*/
 
     @Bean
     public IntegrationFlow flowRouting() { // punto de entrada
         return IntegrationFlows.from(INPUT_CHANNEL)
-                .route(router())
+                .<Object, Class<?>>route(Object::getClass, m -> m
+                        .channelMapping(String.class, "otroChanel2")
+                        .channelMapping(Integer.class, "otroChanel1"))
                 .get();
     }
 
