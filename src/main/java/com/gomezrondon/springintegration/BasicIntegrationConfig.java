@@ -12,6 +12,7 @@ import org.springframework.integration.dsl.IntegrationFlows;
 import org.springframework.integration.dsl.Pollers;
 import org.springframework.integration.file.FileReadingMessageSource;
 import org.springframework.integration.file.FileWritingMessageHandler;
+import org.springframework.integration.file.dsl.Files;
 import org.springframework.integration.file.filters.SimplePatternFileListFilter;
 import org.springframework.messaging.MessageHandler;
 
@@ -26,8 +27,8 @@ public class BasicIntegrationConfig{
    @Autowired
    private FilePrinter filePrinter;
 
-    public static final String INPUT_DIR = "source";
-    public static final String OUTPUT_DIR = "destino";
+    public static final String INPUT_DIR = "C:\\Users\\jrgm\\Downloads\\spring-integration\\source";
+    public static final String OUTPUT_DIR = "C:\\Users\\jrgm\\Downloads\\spring-integration\\destino";
     public static final String INPUT_CHANNEL = "printChannel";
 
 
@@ -38,23 +39,12 @@ public class BasicIntegrationConfig{
 
 
     @Bean
-    public MessageSource<File> sourceDirectory() {
-        FileReadingMessageSource messageSource = new FileReadingMessageSource();
-        messageSource.setDirectory(new File(INPUT_DIR));
-        messageSource.setFilter(new SimplePatternFileListFilter("*.txt"));
-        return messageSource;
-    }
-
-    @Bean
-    public MessageHandler targetDirectory() {
-        FileWritingMessageHandler handler = new FileWritingMessageHandler(new File(OUTPUT_DIR));
-        handler.setExpectReply(false); // end of pipeline, reply not needed
-        return handler;
-    }
-    @Bean
-    public IntegrationFlow inboundChannelAdapter() {
-        return IntegrationFlows.from(sourceDirectory(), e -> e.poller(Pollers.fixedRate(1, TimeUnit.SECONDS, 1)))
-                 .handle(targetDirectory())
+    public IntegrationFlow fileReadingFlow() {
+        return IntegrationFlows
+                .from(Files.inboundAdapter(new File(INPUT_DIR))
+                                .patternFilter("*.txt"),
+                        e -> e.poller(Pollers.fixedRate(1, TimeUnit.SECONDS, 1)))
+                .handle(Files.outboundAdapter(new File(OUTPUT_DIR)))
                 .get();
     }
 
