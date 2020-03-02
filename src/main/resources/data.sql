@@ -1,0 +1,1 @@
+insert into PERSON values(1,'javier', 'gomez');

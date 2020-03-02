@@ -13,9 +13,13 @@ repositories {
 }
 
 dependencies {
+	//implementation 'org.springframework.boot:spring-boot-starter-web'
 
+	compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.10.2'
+	implementation 'org.springframework.boot:spring-boot-starter-jdbc'
+	runtimeOnly 'com.h2database:h2'
 	implementation 'org.springframework.boot:spring-boot-starter-integration'
-	implementation 'org.springframework.integration:spring-integration-file'
+	implementation 'org.springframework.integration:spring-integration-jdbc'
 
 	testImplementation('org.springframework.boot:spring-boot-starter-test') {
 		exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
