@@ -20,6 +20,8 @@ public class BasicIntegrationConfig{
 
     @Autowired
     private PersonDirectoryService service;
+    @Autowired
+    private PersonRegistrationService registrationService;
 
     public static final String PRINT_CHANNEL = "printChannel";
     public static final String UPPERCASE_CHANNEL = "uppercaseChannel";
@@ -34,8 +36,8 @@ public class BasicIntegrationConfig{
 
     @Bean
     public IntegrationFlow inboundChannelAdapter() {
-        return IntegrationFlows.from(service,"findNewPeople", e -> e.poller(Pollers.fixedRate(1, TimeUnit.SECONDS, 1)))
-                .channel(PRINT_CHANNEL)
+        return IntegrationFlows.from(service,"findNewPeople", e -> e.poller(Pollers.fixedRate(3, TimeUnit.SECONDS, 1))) // inbound
+                .handle(registrationService,"registerEmail") // outbound service adapter
                 .get();
     }
 
