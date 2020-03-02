@@ -10,55 +10,52 @@ import org.springframework.integration.core.MessageSource;
 import org.springframework.integration.dsl.IntegrationFlow;
 import org.springframework.integration.dsl.IntegrationFlows;
 import org.springframework.integration.dsl.Pollers;
+import org.springframework.integration.file.FileReadingMessageSource;
+import org.springframework.integration.file.FileWritingMessageHandler;
+import org.springframework.integration.file.filters.SimplePatternFileListFilter;
+import org.springframework.messaging.MessageHandler;
 
+import java.io.File;
 import java.util.concurrent.TimeUnit;
 
 
 @Configuration
 @EnableIntegration
 public class BasicIntegrationConfig{
+ // https://docs.spring.io/spring-integration/reference/html/file.html
+   @Autowired
+   private FilePrinter filePrinter;
 
-    @Autowired
-    private PersonDirectoryService service;
-
-    public static final String PRINT_CHANNEL = "printChannel";
-    public static final String UPPERCASE_CHANNEL = "uppercaseChannel";
+    public static final String INPUT_DIR = "source";
+    public static final String OUTPUT_DIR = "destino";
+    public static final String INPUT_CHANNEL = "printChannel";
 
 
-
-    @Bean(name = PRINT_CHANNEL)
+    @Bean(name = INPUT_CHANNEL)
     public DirectChannel requestChannel() {
         return new DirectChannel();
     }
 
 
     @Bean
+    public MessageSource<File> sourceDirectory() {
+        FileReadingMessageSource messageSource = new FileReadingMessageSource();
+        messageSource.setDirectory(new File(INPUT_DIR));
+        messageSource.setFilter(new SimplePatternFileListFilter("*.txt"));
+        return messageSource;
+    }
+
+    @Bean
+    public MessageHandler targetDirectory() {
+        FileWritingMessageHandler handler = new FileWritingMessageHandler(new File(OUTPUT_DIR));
+        handler.setExpectReply(false); // end of pipeline, reply not needed
+        return handler;
+    }
+    @Bean
     public IntegrationFlow inboundChannelAdapter() {
-        return IntegrationFlows.from(service,"findNewPeople", e -> e.poller(Pollers.fixedRate(1, TimeUnit.SECONDS, 1)))
-                .channel(PRINT_CHANNEL)
+        return IntegrationFlows.from(sourceDirectory(), e -> e.poller(Pollers.fixedRate(1, TimeUnit.SECONDS, 1)))
+                 .handle(targetDirectory())
                 .get();
     }
-
-    @Bean
-    public IntegrationFlow fileMover() { // punto de entrada
-        return IntegrationFlows.from(PRINT_CHANNEL)
-                .handle(new PrintService()) //Service Activator
-                .get();
-    }
-
-    @Bean(name = UPPERCASE_CHANNEL)
-    public DirectChannel responseChannel() {
-        return new DirectChannel();
-    }
-
-    @Bean
-    public IntegrationFlow fileMover2() { // punto de entrada
-        return IntegrationFlows.from(UPPERCASE_CHANNEL)
-                .handle(new UppercaseService(), "execute") //Service Activator
-              //   .channel(OUTPUT_CHANNEL) //is in the replyChannel
-                .get();
-    }
-
-
 
 }
