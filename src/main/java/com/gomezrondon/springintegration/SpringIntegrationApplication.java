@@ -33,7 +33,7 @@ public class SpringIntegrationApplication implements ApplicationRunner {
 /*			String uppercase = printerGateway.uppercase(person);
 			System.out.println("<<< "+uppercase);*/
 
-			printerGateway.print(person);
+		//	printerGateway.print(person);
 		});
 
 	}
